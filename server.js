@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const db = require('./model/db')
+
 const cors = require('cors')
 // const { LocalStorage } = require("node-localstorage");
 // let localStorage = new LocalStorage('./scratch');
@@ -12,6 +12,8 @@ app.use(cors({
     origin: '*'
 }));
 app.use(express.json())
+
+const db = require('./model/db')
 
 
 // RUTAS: Las rutas que manejará el servidor para servir recursos
