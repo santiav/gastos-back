@@ -161,6 +161,17 @@ app.put("/api/tarjeta/editar-gasto/:id", (req, res) => {
     })
 })
 
+
+// Borrar gasto
+app.delete("/api/tarjeta/borrar-gasto/:id", (req, res) => {
+
+    let id = req.params.id
+    db.query("DELETE FROM tarjetas WHERE id = ?", [id], (err, results) => {
+        if (err) throw err
+        console.info("datos eliminados!")
+    })
+})
+
 // FILTROS
 // Todos los gastos del usuario en mes actual y de todos los usuarios
 app.get("/api/ver-gastos/:usuario/mes-actual", (req, res) => {
