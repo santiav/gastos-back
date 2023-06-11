@@ -34,6 +34,7 @@ app.get("/api/importe-total/:usuario", (req, res) => {
     let usuario = req.params.usuario
     db.query("SELECT SUM(importe) FROM gastos WHERE usuario = ? AND moneda = 'pesos'", usuario, (err, result) => {
         if (err) {
+            console.log("ERROR en /api/importe-total/:usuario")
             console.error(err)
         }
         res.send(result)
@@ -57,6 +58,7 @@ app.get("/api/importe-aportes", (req, res) => {
     const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1"
     db.query(sql, (err, result) => {
         if (err) {
+            console.log("ERROR en /api/importe-aportes")
             console.error(err)
         }
         res.send(result)
@@ -69,6 +71,7 @@ app.get("/api/importe-aportes-santi", (req, res) => {
     const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'santi'"
     db.query(sql, (err, result) => {
         if (err) {
+            console.log("ERROR en /api/importe-aportes-santi")
             console.error(err)
         }
         res.send(result)
@@ -81,6 +84,7 @@ app.get("/api/importe-aportes-sil", (req, res) => {
     const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'syl'"
     db.query(sql, (err, result) => {
         if (err) {
+            console.log("ERROR en /api/importe-aportes-sil")
             console.error(err)
         }
         res.send(result)
