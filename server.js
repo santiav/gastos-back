@@ -8,9 +8,8 @@ const cors = require('cors')
 const app = express()
 const port = 4000
 
-app.use(cors({
-    origin: '*'
-}));
+
+app.use(cors());
 app.use(express.json())
 
 const db = require('./model/db')
@@ -194,6 +193,10 @@ app.get("/api/ver-gastos/:usuario/mes-actual", (req, res) => {
     });
 });
 
+app.use(function (err, req, res, next) {
+    console.error("ERROR STACK", err.stack);
+    res.status(500).send('Something broke!');
+});
 
 app.listen(port, () => {
     console.info(`Servidor en puerto: ${port}`)
