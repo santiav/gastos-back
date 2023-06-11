@@ -22,9 +22,9 @@ app.get("/api/usuarios", async (req, res) => {
         const [rows] = await pool.query("SELECT * FROM cuentas");
         console.log("rows /api/usuarios", rows)
         res.send(rows)
-        
+
     } catch (error) {
-        return res.status(500).json({ message: "Something goes wrong" });
+        return res.status(500).json({ message: "Something goes wrong" + err });
     }
 
 })
@@ -34,65 +34,80 @@ app.get("/api/importe-total/:usuario", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
 
     try {
-    let usuario = req.params.usuario
+        let usuario = req.params.usuario
 
-    const [rows] = await pool.query("SELECT SUM(importe) FROM gastos WHERE usuario = ? AND moneda = 'pesos'", [usuario])
+        const [rows] = await pool.query("SELECT SUM(importe) FROM gastos WHERE usuario = ? AND moneda = 'pesos'", [usuario])
         console.log("/api/importe-total/:usuario", rows)
         res.send(rows)
-    
+
     } catch (err) {
-        return res.status(500).json({ message: "Something goes wrong" });
+        return res.status(500).json({ message: "Something goes wrong" + err });
     }
 });
 
 // Todos los aportes en común
-app.get("/api/aportes", (req, res) => {
+app.get("/api/aportes", async (req, res) => {
 
-    pool.query("SELECT item,rubro,importe, moneda, fechaGasto,comentarios, usuario  FROM gastos WHERE aporte = 1", (err, result) => {
-        if (err) {
-            console.error(err)
-        }
-        res.send(result)
-    });
+    try {
+        const [rows] = await pool.query("SELECT item,rubro,importe, moneda, fechaGasto,comentarios, usuario  FROM gastos WHERE aporte = 1")
+        console.log("/api/aportes", rows)
+        res.send(rows)
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something goes wrong" + err });
+    }
+
+
 });
 
 // Importe total entre quienes aportan en común
-app.get("/api/importe-aportes", (req, res) => {
+app.get("/api/importe-aportes", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
-    const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1"
-    pool.query(sql, (err, result) => {
-        if (err) {
-            console.log("ERROR en /api/importe-aportes")
-            console.error(err)
-        }
-        res.send(result)
-    });
+
+    try {
+        const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1"
+        const [rows] = await pool.query(sql)
+        console.log("/api/importe-aportes", rows)
+        res.send(rows)
+
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something goes wrong" + err })
+    }
+
+
 });
 
 // importe en comun santi
-app.get("/api/importe-aportes-santi", (req, res) => {
+app.get("/api/importe-aportes-santi", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
-    const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'santi'"
-    pool.query(sql, (err, result) => {
-        if (err) {
-            console.log("ERROR en /api/importe-aportes-santi")
-            console.error(err)
-        }
-        res.send(result)
-    });
+    try {
+        const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'santi'"
+        const [rows] = await pool.query(sql)
+        res.send(rows)
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something goes wrong" + err })
+    }
+
+
+
 });
 
 // importe en comun santi
-app.get("/api/importe-aportes-sil", (req, res) => {
+app.get("/api/importe-aportes-sil", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
-    const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'syl'"
-    pool.query(sql, (err, result) => {
-        if (err) {
-            console.log("ERROR en /api/importe-aportes-sil")
-            console.error(err)
-        }
-        res.send(result)
-    });
+    try {
+        const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'syl'"
+        const [rows] = await pool.query(sql)
+        res.send(rows)
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something goes wrong" + err })
+    }
+
+
+
 });
 
 // CRUD GASTO
@@ -104,40 +119,43 @@ app.post("/api/agregar-gasto", (req, res) => {
     let data = req.body
     pool.query("INSERT INTO gastos SET ?", data, (err, results) => {
         if (err) throw err
-        console.info("datos agregados!")
+        console.info("datos agregados!" + results)
     })
 })
 
 // Todos los gastos del usuario
-app.get("/api/ver-gastos/:usuario", (req, res) => {
-    let usuario = req.params.usuario
-    pool.query("SELECT * FROM gastos WHERE usuario = ?;SELECT * FROM tarjetas WHERE usuario = ?; ", [usuario, usuario], (err, result) => {
-        if (err) {
-            console.error(err)
-        }
-        //  console.log(result)
-        res.send(result)
-    });
+app.get("/api/ver-gastos/:usuario", async (req, res) => {
+    try {
+        let usuario = req.params.usuario
+        const [rows] = await pool.query("SELECT * FROM gastos WHERE usuario = ?;SELECT * FROM tarjetas WHERE usuario = ?; ", [usuario, usuario])
+        res.send(rows)
+
+    } catch (err) {
+        return res.status(500).json({ message: "Something goes wrong" + err })
+    }
+
 });
 
 // Editar gasto diario
 app.put("/api/editar-gasto/:id", (req, res) => {
 
+
     const id = req.params.id
     let data = req.body
     pool.query("UPDATE gastos SET ? where id = ?", [data, id], (err, results) => {
         if (err) throw err
-        console.info("gasto actualizado!")
+        console.info("gasto actualizado!" + results)
     })
 })
 
 // Borrar gasto
 app.delete("/api/borrar-gasto/:id", (req, res) => {
 
+
     let id = req.params.id
     pool.query("DELETE FROM gastos WHERE id = ?", [id], (err, results) => {
         if (err) throw err
-        console.info("datos eliminados!")
+        console.info("datos eliminados!" + results)
     })
 })
 
@@ -146,6 +164,7 @@ app.delete("/api/borrar-gasto/:id", (req, res) => {
 // Agregar resumen tarjeta (gasto)
 app.post("/api/agregar-tarjeta", (req, res) => {
 
+  
     let data = req.body
     pool.query("INSERT INTO tarjetas SET ?", data, (err, results) => {
         if (err) throw err
@@ -155,6 +174,7 @@ app.post("/api/agregar-tarjeta", (req, res) => {
 
 // Editar gasto tarjeta
 app.put("/api/tarjeta/editar-gasto/:id", (req, res) => {
+
 
     const id = req.params.id
     let data = req.body
@@ -177,24 +197,25 @@ app.delete("/api/tarjeta/borrar-gasto/:id", (req, res) => {
 
 // FILTROS
 // Todos los gastos del usuario en mes actual y de todos los usuarios
-app.get("/api/ver-gastos/:usuario/mes-actual", (req, res) => {
-    let usuario = req.params.usuario ?? "todos"
+app.get("/api/ver-gastos/:usuario/mes-actual", async (req, res) => {
 
-    let sql;
-    if (usuario != "todos") {
-        sql = "select id, item,rubro,importe,tipoPago, moneda, fechaGasto,comentarios FROM `gastos` WHERE usuario = ? AND MONTH(fechaGasto) = MONTH(now()) AND YEAR(fechaGasto) = YEAR(now()) "
-    } else {
+    try {
+        let usuario = req.params.usuario ?? "todos"
+        let sql;
+        if (usuario != "todos") {
+            sql = "select id, item,rubro,importe,tipoPago, moneda, fechaGasto,comentarios FROM `gastos` WHERE usuario = ? AND MONTH(fechaGasto) = MONTH(now()) AND YEAR(fechaGasto) = YEAR(now()) "
+        } else {
 
-        sql = "select * FROM `gastos` WHERE aporte = 1 AND MONTH(fechaGasto) = MONTH(now()) AND YEAR(fechaGasto) = YEAR(now()) "
-    }
-
-    pool.query(sql, usuario, (err, result) => {
-        if (err) {
-            console.error(err)
+            sql = "select * FROM `gastos` WHERE aporte = 1 AND MONTH(fechaGasto) = MONTH(now()) AND YEAR(fechaGasto) = YEAR(now()) "
         }
+        
+        const [rows] = await pool.query(sql, [usuario])
+        res.send(rows)
 
-        res.send(result)
-    });
+    } catch (err) {
+        return res.status(500).json({ message: "Something goes wrong" + err })
+    }
+    
 });
 
 
