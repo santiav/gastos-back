@@ -38,7 +38,7 @@ app.get("/api/importe-total/:usuario", async (req, res) => {
         let usuario = req.params.usuario
 
         const [rows] = await pool.query("SELECT SUM(importe) FROM gastos WHERE usuario = ? AND moneda = 'pesos'", [usuario])
-        console.log("/api/importe-total/:usuario", rows)
+        // console.log("/api/importe-total/:usuario", rows)
         res.send(rows)
 
     } catch (err) {
@@ -70,7 +70,7 @@ app.get("/api/importe-aportes", async (req, res) => {
 
         const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1"
         const [rows] = await pool.query(sql)
-        console.log("/api/importe-aportes", rows)
+       //  console.log("/api/importe-aportes", rows)
         res.send(rows)
 
 
