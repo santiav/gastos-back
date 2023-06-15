@@ -2,16 +2,13 @@
 import express from 'express'
 import cors from 'cors'
 
-// const db = require('../model/db')
-import { pool } from "./db.js";
-
 let origen = "https://santi-gastos-hogar.netlify.app"
 const app = express()
 const port = 4000
 
 // Middlewares
 app.use(cors({
-    origin: "https://santi-gastos-hogar.netlify.app",
+    origin: origen,
 }));
 app.use(express.json())
 
