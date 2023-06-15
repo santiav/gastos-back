@@ -7,7 +7,9 @@ const app = express()
 const port = 4000
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+    origin: "http://santi-gastos-hogar.netlify.app",
+}));
 app.use(express.json())
 
 // const db = require('../model/db')
