@@ -24,7 +24,7 @@ app.get("/api/usuarios", async (req, res) => {
         console.log("rows /api/usuarios", rows)
         res.send(rows)
 
-    } catch (error) {
+    } catch (err) {
         return res.status(500).json({ message: "Something goes wrong" + err });
     }
 
@@ -124,7 +124,7 @@ app.post("/api/agregar-gasto", async (req, res) => {
     let data = req.body
 
     await pool.query("INSERT INTO gastos SET ?", [data])
-    console.info("datos agregados!" + results)
+    console.info("datos agregados!" + data)
     res.redirect("/");
 })
 
@@ -150,7 +150,7 @@ app.put("/api/editar-gasto/:id", async (req, res) => {
     let data = req.body
 
     await pool.query("UPDATE gastos SET ? where id = ?", [data, id])
-    console.info("gasto actualizado!" + results)
+    console.info("gasto actualizado!" + data + " " + id)
     res.redirect("/");
 })
 
@@ -161,7 +161,7 @@ app.delete("/api/borrar-gasto/:id", async (req, res) => {
     let id = req.params.id
 
     await pool.query("DELETE FROM gastos WHERE id = ?", [id])
-    console.info("datos eliminados!" + results)
+    console.info("datos eliminados!" + id)
     res.redirect("/");
 })
 
@@ -195,9 +195,8 @@ app.put("/api/tarjeta/editar-gasto/:id", async (req, res) => {
 app.delete("/api/tarjeta/borrar-gasto/:id", async (req, res) => {
 
     let id = req.params.id
-
     await pool.query("DELETE FROM tarjetas WHERE id = ?", [id])
-        console.info("datos eliminados!")
+    console.info("datos eliminados!")
     res.redirect("/");
 })
 
