@@ -2,18 +2,17 @@
 import express from 'express'
 import cors from 'cors'
 
+// const db = require('../model/db')
+import { pool } from "./db.js";
 
 const app = express()
 const port = 4000
 
 // Middlewares
 app.use(cors({
-    origin: "https://santi-gastos-hogar.netlify.app",
+    origin: "https://santi-gastos-hogar.netlify.app/",
 }));
 app.use(express.json())
-
-// const db = require('../model/db')
-import { pool } from "./db.js";
 
 
 // RUTAS: Las rutas que manejará el servidor para servir recursos
