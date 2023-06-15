@@ -8,7 +8,7 @@ const port = 4000
 
 // Middlewares
 app.use(cors({
-    origin: "http://santi-gastos-hogar.netlify.app",
+    origin: "https://santi-gastos-hogar.netlify.app",
 }));
 app.use(express.json())
 
