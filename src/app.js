@@ -5,15 +5,12 @@ import cors from 'cors'
 // const db = require('../model/db')
 import { pool } from "./db.js";
 
+let origen = "https://santi-gastos-hogar.netlify.app"
 const app = express()
 const port = 4000
 
 // Middlewares
-app.use(cors({
-    origin: "https://santi-gastos-hogar.netlify.app",
-    optionsSuccessStatus: 200,
-    methods: ['GET', 'PUT', 'POST', 'DELETE']
-}));
+app.use(cors());
 app.use(express.json())
 
 
@@ -22,6 +19,7 @@ app.use(express.json())
 // Usuarios
 app.get("/api/usuarios", async (req, res) => {
     try {
+        res.setHeader("Access-Control-Allow-Origin", origen)
         const [rows] = await pool.query("SELECT * FROM cuentas");
         console.log("rows /api/usuarios", rows)
         res.send(rows)
@@ -38,7 +36,7 @@ app.get("/api/importe-total/:usuario", async (req, res) => {
 
     try {
         let usuario = req.params.usuario
-
+        res.setHeader("Access-Control-Allow-Origin", origen)
         const [rows] = await pool.query("SELECT SUM(importe) FROM gastos WHERE usuario = ? AND moneda = 'pesos'", [usuario])
         console.log("/api/importe-total/:usuario", rows)
         res.send(rows)
@@ -52,6 +50,7 @@ app.get("/api/importe-total/:usuario", async (req, res) => {
 app.get("/api/aportes", async (req, res) => {
 
     try {
+        res.setHeader("Access-Control-Allow-Origin", origen)
         const [rows] = await pool.query("SELECT item,rubro,importe, moneda, fechaGasto,comentarios, usuario  FROM gastos WHERE aporte = 1")
         console.log("/api/aportes", rows)
         res.send(rows)
@@ -68,6 +67,7 @@ app.get("/api/importe-aportes", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
 
     try {
+        res.setHeader("Access-Control-Allow-Origin", origen)
         const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1"
         const [rows] = await pool.query(sql)
         console.log("/api/importe-aportes", rows)
@@ -85,6 +85,7 @@ app.get("/api/importe-aportes", async (req, res) => {
 app.get("/api/importe-aportes-santi", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
     try {
+        res.setHeader("Access-Control-Allow-Origin", origen)
         const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'santi'"
         const [rows] = await pool.query(sql)
         res.send(rows)
@@ -101,6 +102,7 @@ app.get("/api/importe-aportes-santi", async (req, res) => {
 app.get("/api/importe-aportes-sil", async (req, res) => {
     // usuario = "santi" // localStorage.getItem("usuario")
     try {
+        res.setHeader("Access-Control-Allow-Origin", origen)
         const sql = "SELECT SUM(importe) FROM gastos WHERE aporte = 1 AND usuario = 'syl'"
         const [rows] = await pool.query(sql)
         res.send(rows)
@@ -120,6 +122,7 @@ app.get("/api/importe-aportes-sil", async (req, res) => {
 app.post("/api/agregar-gasto", (req, res) => {
 
     let data = req.body
+    res.setHeader("Access-Control-Allow-Origin", origen)
     pool.query("INSERT INTO gastos SET ?", data, (err, results) => {
         if (err) throw err
         console.info("datos agregados!" + results)
@@ -129,6 +132,7 @@ app.post("/api/agregar-gasto", (req, res) => {
 // Todos los gastos del usuario
 app.get("/api/ver-gastos/:usuario", async (req, res) => {
     try {
+        res.setHeader("Access-Control-Allow-Origin", origen)
         let usuario = req.params.usuario
         const [rows] = await pool.query("SELECT * FROM gastos WHERE usuario = ?;SELECT * FROM tarjetas WHERE usuario = ?; ", [usuario, usuario])
         res.send(rows)
@@ -145,6 +149,7 @@ app.put("/api/editar-gasto/:id", (req, res) => {
 
     const id = req.params.id
     let data = req.body
+    res.setHeader("Access-Control-Allow-Origin", origen)
     pool.query("UPDATE gastos SET ? where id = ?", [data, id], (err, results) => {
         if (err) throw err
         console.info("gasto actualizado!" + results)
@@ -156,6 +161,7 @@ app.delete("/api/borrar-gasto/:id", (req, res) => {
 
 
     let id = req.params.id
+    res.setHeader("Access-Control-Allow-Origin", origen)
     pool.query("DELETE FROM gastos WHERE id = ?", [id], (err, results) => {
         if (err) throw err
         console.info("datos eliminados!" + results)
@@ -169,6 +175,7 @@ app.post("/api/agregar-tarjeta", (req, res) => {
 
   
     let data = req.body
+    res.setHeader("Access-Control-Allow-Origin", origen)
     pool.query("INSERT INTO tarjetas SET ?", data, (err, results) => {
         if (err) throw err
         console.info("datos agregados!")
@@ -181,6 +188,7 @@ app.put("/api/tarjeta/editar-gasto/:id", (req, res) => {
 
     const id = req.params.id
     let data = req.body
+    res.setHeader("Access-Control-Allow-Origin", origen)
     pool.query("UPDATE tarjetas SET ? where id = ?", [data, id], (err, results) => {
         if (err) throw err
         console.info("gasto actualizado!")
@@ -192,6 +200,7 @@ app.put("/api/tarjeta/editar-gasto/:id", (req, res) => {
 app.delete("/api/tarjeta/borrar-gasto/:id", (req, res) => {
 
     let id = req.params.id
+    res.setHeader("Access-Control-Allow-Origin", origen)
     pool.query("DELETE FROM tarjetas WHERE id = ?", [id], (err, results) => {
         if (err) throw err
         console.info("datos eliminados!")
@@ -205,6 +214,7 @@ app.get("/api/ver-gastos/:usuario/mes-actual", async (req, res) => {
     try {
         let usuario = req.params.usuario ?? "todos"
         let sql;
+        res.setHeader("Access-Control-Allow-Origin", origen)
         if (usuario != "todos") {
             sql = "select id, item,rubro,importe,tipoPago, moneda, fechaGasto,comentarios FROM `gastos` WHERE usuario = ? AND MONTH(fechaGasto) = MONTH(now()) AND YEAR(fechaGasto) = YEAR(now()) "
         } else {
