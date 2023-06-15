@@ -7,9 +7,7 @@ const app = express()
 const port = 4000
 
 // Middlewares
-app.use(cors({
-    origin: origen,
-}));
+app.use(cors());
 app.use(express.json())
 
 // const db = require('../model/db')
